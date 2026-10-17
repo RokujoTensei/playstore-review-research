@@ -18,9 +18,9 @@ REVIEWS_PER_APP = int(os.environ.get("REVIEWS_PER_APP", "1000"))
 # name -> package id (None = look it up by searching the name)
 APPS = {
     "Splitwise": "com.Splitwise.SplitwiseMobile",
-    "Tricount": None,
-    "Settle Up": None,
-    "Splid": None,
+    "Tricount": "com.tribab.tricount.android",
+    "Settle Up": "cz.destil.settleup",
+    "Splid": "splid.teamturtle.com.splid",
 }
 
 
@@ -59,6 +59,14 @@ def fetch(app_id):
     return out
 
 
+LOG = []
+
+
+def log(msg):
+    print(msg)
+    LOG.append(msg)
+
+
 def main():
     rows = []
     for name, app_id in APPS.items():
@@ -66,10 +74,10 @@ def main():
         if app_id is None:
             app_id, title = resolve(name)
             if app_id is None:
-                print(f"{name}: not found, skipped")
+                log(f"{name}: not found, skipped")
                 continue
         got = fetch(app_id)
-        print(f"{name} -> {app_id} ({title}): {len(got)} reviews")
+        log(f"{name} -> {app_id}: {len(got)} reviews")
         for r in got:
             rows.append({
                 "app": name,
@@ -88,7 +96,10 @@ def main():
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    print(f"Saved {len(rows)} reviews to {path}")
+    log(f"Saved {len(rows)} reviews to {path}")
+    with open("data/run_log.txt", "a", encoding="utf-8") as f:
+        f.write(f"--- {datetime.datetime.utcnow():%Y-%m-%d %H:%M} UTC ---\n")
+        f.write("\n".join(LOG) + "\n")
 
 
 if __name__ == "__main__":
