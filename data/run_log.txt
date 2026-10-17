@@ -1,0 +1,6 @@
+--- 2026-10-17 06:55 UTC ---
+Splitwise -> com.Splitwise.SplitwiseMobile: 1000 reviews
+Tricount -> com.tribab.tricount.android: 1000 reviews
+Settle Up -> cz.destil.settleup: 1000 reviews
+Splid -> splid.teamturtle.com.splid: 1000 reviews
+Saved 4000 reviews to data/reviews_in_2026-10-17.csv
