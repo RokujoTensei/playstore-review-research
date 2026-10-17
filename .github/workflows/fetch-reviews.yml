@@ -1,0 +1,34 @@
+name: Fetch Play Store reviews
+
+on:
+  workflow_dispatch:
+    inputs:
+      reviews_per_app:
+        description: "Newest reviews to fetch per app"
+        default: "1000"
+  schedule:
+    - cron: "17 3 1 * *"   # 1st of every month, 03:17 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install google-play-scraper==1.2.7
+      - name: Fetch reviews
+        env:
+          REVIEWS_PER_APP: ${{ github.event.inputs.reviews_per_app || '1000' }}
+        run: python fetch_reviews.py
+      - name: Commit CSV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "Add Play Store reviews $(date -u +%F)"
+          git push
